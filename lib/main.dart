@@ -1,3 +1,4 @@
+import 'package:encrypt/encrypt.dart';
 import 'package:flutter/material.dart';
 import 'package:encrypt/encrypt.dart' as encrypt;
 
@@ -9,9 +10,14 @@ var plainText = 'empty text';
 encrypt.Encrypted? encrypted;
 
 //  final key = encrypt.Key.fromSecureRandom(32);
+// var key = encrypt.Key.fromUtf8(ctrlKey.text);
 var key = encrypt.Key.fromUtf8(ctrlKey.text);
-final encrypter = encrypt.Encrypter(encrypt.AES(key));
+// var encrypter = encrypt.Encrypter(encrypt.AES(key));
 final iv = encrypt.IV.fromSecureRandom(16);
+
+Encrypter getEncrypter() {
+  return encrypt.Encrypter(encrypt.AES(key));
+}
 
 void main() => runApp(const MyApp());
 
@@ -25,19 +31,16 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   void encryptText(String text) {
     final plainText = text;
-    encrypted = encrypter.encrypt(plainText, iv: iv);
+    encrypted = getEncrypter().encrypt(plainText, iv: iv);
 
     cipherText = encrypted!.base64;
     setState(() {});
-    // debugPrint(encrypted.base64);
-    debugPrint(cipherText);
   }
 
   void decryptText() {
-    final decrypted = encrypter.decrypt(encrypted!, iv: iv);
+    final decrypted = getEncrypter().decrypt(encrypted!, iv: iv);
     plainText = decrypted;
     setState(() {});
-    debugPrint(decrypted);
   }
 
   @override
